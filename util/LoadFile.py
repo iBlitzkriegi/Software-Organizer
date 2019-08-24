@@ -16,7 +16,10 @@ class FileLoader:
                 "categories": [],
                 "tutorials": {
                     "first-open": True,
-                    "add-category": True
+                    "add-category": True,
+                    "enter-category": True,
+                    "add-icon": True,
+                    "add-game": True
                 }
             }
             json.dump(self.data, file, indent=4)
@@ -27,8 +30,38 @@ class FileLoader:
             f.close()
         return self.data
 
+    def dump_data(self, items, **kwargs):
+        with open('data.json', 'w') as f:
+            self.data[self.key] = items
+            json.dump(self.data, f, indent=4)
+            f.close()
+        return self.data
+
+    def disable_tutorials(self):
+        if self.data is None:
+            self.load_file()
+        self.data['tutorials'] = {
+            "tutorials": {
+                "first-open": False,
+                "add-category": False,
+                "enter-category": False,
+                "add-icon": False,
+                "add-game": False
+            }
+        }
+        print(self.data['tutorials'])
+
     def set_key(self, text):
         self.key = text
+        return self.load_file()
+
+    def get_key(self):
+        return self.key
 
     def is_first_open(self):
         return self.data['tutorials']['first-open']
+
+    def get_items(self):
+        if self.items is None:
+            return self.load_file()
+        return self.items
