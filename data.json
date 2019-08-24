@@ -2,6 +2,9 @@
     "categories": [],
     "tutorials": {
         "first-open": true,
-        "add-category": true
+        "add-category": true,
+        "enter-category": true,
+        "add-icon": true,
+        "add-game": true
     }
 }
