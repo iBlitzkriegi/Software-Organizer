@@ -20,6 +20,7 @@ labels = []
 window_title = 'Software Organizer by iBlitzkriegi'
 
 file_loader = FileLoader()
+data = file_loader.get_data()
 items = file_loader.get_items()
 
 
@@ -84,11 +85,52 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
         file_loader.dump_data(items=items)
 
     def add_category(self):
+        if file_loader.check_tutorial_mode('add-category'):
+            QMessageBox.about(self, window_title, 'You will now be asked to give your new category a name.\n'
+                                                  'This is just for storage mostly, so just give it a generic name\n'
+                                                  'You will probably never see this name again, just make sure its unique!')
+            file_loader.toggle_tutorial('add-category')
+            file_loader.toggle_tutorial('first-open')
         text, ok = QInputDialog.getText(self, 'Get text', 'Category name:', QLineEdit.Normal, "")
         if not ok:
             return
+        global file_open
+        if file_loader.check_tutorial_mode('add-category-icon'):
+            QMessageBox.about(self, window_title,
+                              'Great! Now you will be asked to select an image to represent your new category.\n'
+                              'Just browse to wherever your image is and select it. \n'
+                              'It may be smart to pin a Icons folder to your Quick Access menu in windows explorer to make this process much faster!')
+            file_loader.toggle_tutorial('add-category-icon')
+        file_open = True
+        icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
+        if not ok:
+            file_open = False
+            return
+        global items
+        global data
+        items[-1] = {
+            "name": text,
+            "icon": icon
+        }
+        items.append(category_add_button)
+        data[text] = []
+        self.clear_grid()
+        file_loader.dump_data(data=data, items=items)
+        global labels
+        labels = []
+        self.load_items()
+        file_open = False
+        self.setFocus(True)
+        if file_loader.check_tutorial_mode('enter-category'):
+            QMessageBox.about(self, window_title, 'And Ta-Daaaa! You have created a new category. \n'
+                                                  'Now you can enter this category by left-clicking it. You can edit this category by right-clicking it!\n'
+                                                  'To get back to the main category screen just click backspace at any time.')
+            file_loader.toggle_tutorial('enter-category')
 
-        print('Adding category')
+
+    def clear_grid(self):
+        for i in reversed(range(self.gridLayout.count())):
+            self.gridLayout.itemAt(i).widget().setParent(None)
 
     def add_item(self):
         print('ADSDADA')
@@ -130,6 +172,9 @@ class IconLabel(QLabel):
 
     def mousePressEvent(self, e):
         self.clicked.emit()
+        global file_open
+        if file_open:
+            return
 
 
 if __name__ == "__main__":
@@ -139,9 +184,13 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    # if file_loader.is_first_open():
-    #     reply = QMessageBox.question(window, window_title, 'Hello! Thank you for downloading my program!\n'
-    #                                                        'Would you like me to show you tips on how to get started?')
-    #     if reply == QMessageBox.No:
-    #         file_loader.disable_tutorials()
+    if file_loader.is_first_open():
+        reply = QMessageBox.question(window, window_title, 'Hello! Thank you for downloading my program!\n'
+                                                           'Would you like me to show you tips on how to get started?')
+        if reply == QMessageBox.No:
+            file_loader.disable_tutorials()
+        else:
+            reply = QMessageBox.about(window, window_title,
+                                      "This is the main screen. This is where your categories of software are stored.\n"
+                                      "To create a new Category, click the + Icon.")
     sys.exit(app.exec_())
