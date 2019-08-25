@@ -62,6 +62,23 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
         self.setupUi(self)
         self.load_items()
 
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Backspace:
+            global categories_mode
+            if categories_mode:
+                return
+            global key
+            global labels
+            global data
+            global items
+            data = file_loader.set_key('categories')
+            items = file_loader.get_items()
+            categories_mode = True
+            labels = []
+            self.clear_grid()
+            self.load_items()
+            self.setFocus(True)
+
     def load_items(self):
         global categories_mode
         if len(items) == 0:
