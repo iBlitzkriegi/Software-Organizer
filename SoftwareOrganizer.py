@@ -5,10 +5,9 @@ from util.LoadFile import FileLoader
 from math import ceil
 from PyQt5.QtCore import pyqtSignal, Qt, QEvent
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
-import json
 
 """
-- Setup label to scale images to 96, 96
+- Consider resizing labels with window
 """
 
 categories_mode = True
@@ -108,11 +107,12 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
             return
         global items
         global data
-        items[-1] = {
-            "name": text,
-            "icon": icon
-        }
-        items.append(category_add_button)
+        items.append(
+            {
+                "name": text,
+                "icon": icon
+            }
+        )
         data[text] = []
         self.clear_grid()
         file_loader.dump_data(data=data, items=items)
@@ -153,11 +153,12 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
             file_open = False
             return
         global items
-        items[-1] = {
-            "icon": icon,
-            "exe": executable
-        }
-        items.append(add_button)
+        items.append(
+            {
+                "icon": icon,
+                "exe": executable
+            }
+        )
         file_loader.dump_data(items=items)
         self.clear_grid()
         global labels
@@ -165,7 +166,6 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
         file_open = False
         self.load_items()
         self.setFocus(True)
-
 
 class IconLabel(QLabel):
     clicked = pyqtSignal()
