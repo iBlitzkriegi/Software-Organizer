@@ -9,8 +9,8 @@ import subprocess
 
 """
 - Consider resizing labels with window
+- Remove use of global items and replace with file_loader#get_items()
 """
-
 categories_mode = True
 file_open = False
 key = 'categories'
@@ -234,7 +234,34 @@ class IconLabel(QLabel):
             return
         if e.type() == QEvent.MouseButtonPress:
             if e.button() == Qt.RightButton:
-                pass
+                item = clicked[0][special_key]
+                if categories_mode:
+                    name = item.capitalize()
+                else:
+                    name = [name for name in item.split('/') if '.exe' in name][0].replace('.exe', '')
+                message_box = QMessageBox()
+                message_box.setText('What would you like to do with ' + name + '?')
+                message_box.setWindowIcon(QIcon('Icon.png'))
+                message_box.setWindowTitle(window_title)
+                message_box.setStandardButtons(QMessageBox.Cancel | QMessageBox.Discard)
+                message_box.addButton('Set Icon', QMessageBox.ActionRole)
+                message_box.setDefaultButton(QMessageBox.Cancel)
+                reply = message_box.exec_()
+                clicked_button = message_box.clickedButton().text()
+                if 'Cancel' in clicked_button:
+                    return
+                elif 'Discard' in clicked_button:
+                    return
+                elif 'Icon' in clicked_button:
+                    icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
+                    if not ok:
+                        return
+                    clicked[0]['icon'] = icon
+                    window.clear_grid()
+                    file_loader.dump_data(items=items)
+                    labels = []
+                    window.load_items()
+                    return
             else:
                 if categories_mode:
                     labels = []
