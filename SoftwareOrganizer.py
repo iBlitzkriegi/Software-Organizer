@@ -5,6 +5,7 @@ from util.LoadFile import FileLoader
 from math import ceil
 from PyQt5.QtCore import pyqtSignal, Qt, QEvent
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
+import subprocess
 
 """
 - Consider resizing labels with window
@@ -167,6 +168,7 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
         self.load_items()
         self.setFocus(True)
 
+
 class IconLabel(QLabel):
     clicked = pyqtSignal()
 
@@ -234,7 +236,9 @@ class IconLabel(QLabel):
         self.window.load_items()
 
     def item_clicked(self, clicked):
-        pass
+        executable_name = [executable for executable in clicked[0]['exe'].split('/') if '.exe' in executable][0]
+        directory = clicked[0]['exe'].replace(executable_name, '')
+        subprocess.Popen([directory + executable_name], cwd=directory)
 
 
 if __name__ == "__main__":
