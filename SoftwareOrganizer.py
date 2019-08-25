@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QInputDialog,
 from PyQt5.Qt import QIcon
 from util.LoadFile import FileLoader
 from math import ceil
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, QEvent
 from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
 import json
 
@@ -72,7 +72,6 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
             label = IconLabel(self, file=item['icon'], window=self)
             labels.append(label)
             if 'Add Button' in item[special_key]:
-                print('IT IS')
                 label.clicked.connect(self.add_item if not categories_mode else self.add_category)
             self.gridLayout.addWidget(label, row, column, 1, 1)
             if column + 1 == 4:
@@ -127,13 +126,12 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
                                                   'To get back to the main category screen just click backspace at any time.')
             file_loader.toggle_tutorial('enter-category')
 
-
     def clear_grid(self):
         for i in reversed(range(self.gridLayout.count())):
             self.gridLayout.itemAt(i).widget().setParent(None)
 
     def add_item(self):
-        print('ADSDADA')
+        pass
 
 
 class IconLabel(QLabel):
@@ -143,7 +141,6 @@ class IconLabel(QLabel):
         super(IconLabel, self).__init__(*args, **kwargs)
         self.antialiasing = antialiasing
         self.window = window
-        print(file)
         self.file = file
         self.setMaximumSize(96, 96)
         self.setMinimumSize(96, 96)
@@ -162,7 +159,6 @@ class IconLabel(QLabel):
             painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
 
         path = QPainterPath()
-        print(self.width())
         path.addRoundedRect(
             0, 0, self.width(), self.height(), self.radius, self.radius)
 
@@ -175,12 +171,43 @@ class IconLabel(QLabel):
         global file_open
         if file_open:
             return
+        global labels
+        global categories_mode
+        global items
+        clicked = [items[index] for index, label in enumerate(labels) if label == self]
+        if len(clicked) == 0:
+            return
+        special_key = 'exe' if not categories_mode else 'name'
+        if 'Add Button' in clicked[0][special_key]:
+            return
+        if e.type() == QEvent.MouseButtonPress:
+            if e.button() == Qt.RightButton:
+                pass
+            else:
+                if categories_mode:
+                    labels = []
+                    categories_mode = False
+                    self.category_clicked(clicked)
+                else:
+                    self.item_clicked(clicked)
+
+    def category_clicked(self, clicked):
+        global items
+        global data
+        name = clicked[0]['name']
+        data = file_loader.set_key(name)
+        items = file_loader.get_items()
+        global window
+        window.clear_grid()
+        window.load_items()
+
+    def item_clicked(self, clicked):
+        pass
 
 
 if __name__ == "__main__":
     import sys
 
-    # TODO Create a welcome tutorial with basic walkthrough with file_loader.is_first_open()
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()

@@ -9,12 +9,10 @@ class FileLoader:
     def __init__(self, file='data.json', key='categories'):
         self.file = file
         self.key = key
-        print(self.key)
         self.load_file()
 
     def load_file(self):
         if not path.exists('data.json'):
-            print('no')
             file = open('data.json', 'w')
             self.data = {
                 "categories": [],
@@ -59,7 +57,6 @@ class FileLoader:
     def toggle_tutorial(self, text):
         self.data['tutorials'][text] = False
         self.dump_data()
-        print(self.data['tutorials'][text])
 
 
 
