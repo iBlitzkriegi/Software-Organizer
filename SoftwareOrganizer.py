@@ -63,9 +63,7 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
         self.load_items()
 
     def load_items(self):
-        print('calledd')
         global categories_mode
-        print(categories_mode)
         if len(items) == 0:
             items.append(add_button) if not categories_mode else items.append(category_add_button)
         row = 0
@@ -75,9 +73,7 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
             label = IconLabel(self, file=item['icon'], window=self)
             labels.append(label)
             if 'Add Button' in item[special_key]:
-                print('rawr')
                 label.clicked.connect(self.add_item if not categories_mode else self.add_category)
-                print(label)
             self.gridLayout.addWidget(label, row, column, 1, 1)
             if column + 1 == 4:
                 row += 1
