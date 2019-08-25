@@ -21,6 +21,7 @@ class FileLoader:
                 "tutorials": {
                     "first-open": True,
                     "add-category": True,
+                    "add-category-icon": True,
                     "enter-category": True,
                     "add-icon": True,
                     "add-game": True
@@ -48,11 +49,19 @@ class FileLoader:
             "tutorials": {
                 "first-open": False,
                 "add-category": False,
+                "add-category-icon": False,
                 "enter-category": False,
                 "add-icon": False,
                 "add-game": False
             }
         }
+
+    def toggle_tutorial(self, text):
+        self.data['tutorials'][text] = False
+        self.dump_data()
+        print(self.data['tutorials'][text])
+
+
 
     def set_key(self, text):
         self.key = text
@@ -64,7 +73,13 @@ class FileLoader:
     def is_first_open(self):
         return self.data['tutorials']['first-open']
 
+    def check_tutorial_mode(self, text):
+        return self.data['tutorials'][text]
+
     def get_items(self, **kwargs):
         if self.items is None:
             return self.load_file()[self.key]
         return self.items
+
+    def get_data(self):
+        return self.data
