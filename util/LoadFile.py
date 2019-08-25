@@ -26,6 +26,7 @@ class FileLoader:
                 }
             }
             json.dump(self.data, file, indent=4)
+            self.items = self.data[self.key]
             return self.data
         with open('data.json', 'r') as f:
             self.data = json.load(f)
@@ -44,21 +45,19 @@ class FileLoader:
         if self.data is None:
             self.load_file()
         self.data['tutorials'] = {
-            "tutorials": {
-                "first-open": False,
-                "add-category": False,
-                "add-category-icon": False,
-                "enter-category": False,
-                "add-icon": False,
-                "add-game": False
-            }
+            "first-open": False,
+            "add-category": False,
+            "add-category-icon": False,
+            "enter-category": False,
+            "add-icon": False,
+            "add-game": False
         }
+
+        self.dump_data()
 
     def toggle_tutorial(self, text):
         self.data['tutorials'][text] = False
         self.dump_data()
-
-
 
     def set_key(self, text):
         self.key = text
