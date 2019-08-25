@@ -63,16 +63,21 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
         self.load_items()
 
     def load_items(self):
+        print('calledd')
+        global categories_mode
+        print(categories_mode)
         if len(items) == 0:
             items.append(add_button) if not categories_mode else items.append(category_add_button)
         row = 0
         column = 0
-        special_key = 'icon' if not categories_mode else 'name'
+        special_key = 'exe' if not categories_mode else 'name'
         for item in items:
             label = IconLabel(self, file=item['icon'], window=self)
             labels.append(label)
             if 'Add Button' in item[special_key]:
+                print('rawr')
                 label.clicked.connect(self.add_item if not categories_mode else self.add_category)
+                print(label)
             self.gridLayout.addWidget(label, row, column, 1, 1)
             if column + 1 == 4:
                 row += 1
@@ -98,7 +103,7 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
             QMessageBox.about(self, window_title,
                               'Great! Now you will be asked to select an image to represent your new category.\n'
                               'Just browse to wherever your image is and select it. \n'
-                              'It may be smart to pin a Icons folder to your Quick Access menu in windows explorer to make this process much faster!')
+                              'It may be smart to pin an Icons folder to your Quick Access menu in windows explorer to make this process much faster!')
             file_loader.toggle_tutorial('add-category-icon')
         file_open = True
         icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
@@ -131,7 +136,39 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
             self.gridLayout.itemAt(i).widget().setParent(None)
 
     def add_item(self):
-        pass
+        if file_loader.check_tutorial_mode('add-icon'):
+            QMessageBox.about(self, window_title, 'This part is just like adding a category!\n'
+                                                  'Select an image that represents this software.')
+            file_loader.toggle_tutorial('add-icon')
+        global file_open
+        file_open = True
+        icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
+        if not ok:
+            file_open = False
+            return
+        if file_loader.check_tutorial_mode('add-game'):
+            QMessageBox.about(self, window_title, 'This part however, is just a little different.\n'
+                                                  'To add an executable, just find the .exe the software uses and select it.\n'
+                                                  'If you are using this for say, setting up a game picker for steam, '
+                                                  'then it is smart to pin your steamapps folder to your Quick Access menu in windows explorer to make this process much faster.')
+            file_loader.toggle_tutorial('add-game')
+        executable, ok = QFileDialog.getOpenFileName(None, 'Select Executable', '', 'Executable Files (*.exe)')
+        if not ok:
+            file_open = False
+            return
+        global items
+        items[-1] = {
+            "icon": icon,
+            "exe": executable
+        }
+        items.append(add_button)
+        file_loader.dump_data(items=items)
+        self.clear_grid()
+        global labels
+        labels = []
+        file_open = False
+        self.load_items()
+        self.setFocus(True)
 
 
 class IconLabel(QLabel):
@@ -197,9 +234,8 @@ class IconLabel(QLabel):
         name = clicked[0]['name']
         data = file_loader.set_key(name)
         items = file_loader.get_items()
-        global window
-        window.clear_grid()
-        window.load_items()
+        self.window.clear_grid()
+        self.window.load_items()
 
     def item_clicked(self, clicked):
         pass
