@@ -1,11 +1,12 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QInputDialog, QLineEdit, QLabel
-from PyQt5.Qt import QIcon
-from util.LoadFile import FileLoader
-from math import ceil
-from PyQt5.QtCore import pyqtSignal, Qt, QEvent
-from PyQt5.QtGui import QPixmap, QPainter, QPainterPath
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+import PyQt5.QtWidgets as QtWidgets
+import PyQt5.QtCore as QtCore
 import subprocess
+import json
+from math import ceil
+from util.LoadFile import FileLoader
 
 """
 - Consider resizing labels with window

@@ -105,3 +105,6 @@ venv.bak/
 *.xml
 *.iml
 data.json
+SoftwareOrganizer.SED
+SoftwareOrganizer.exe
+data.json
