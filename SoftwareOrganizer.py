@@ -108,7 +108,7 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
                                                   'You will probably never see this name again, just make sure its unique!')
             file_loader.toggle_tutorial('add-category')
             file_loader.toggle_tutorial('first-open')
-        text, ok = QInputDialog.getText(self, 'Get text', 'Category name:', QLineEdit.Normal, "")
+        text, ok = QInputDialog.getText(self, window_title, 'Category name:', QLineEdit.Normal, "")
         if not ok:
             return
         global file_open
@@ -119,7 +119,7 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
                               'It may be smart to pin an Icons folder to your Quick Access menu in windows explorer to make this process much faster!')
             file_loader.toggle_tutorial('add-category-icon')
         file_open = True
-        icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
+        icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png)')
         if not ok:
             file_open = False
             return
@@ -156,7 +156,7 @@ class MainWindow(QMainWindow, Ui_SoftwareIOrganizer):
             file_loader.toggle_tutorial('add-icon')
         global file_open
         file_open = True
-        icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
+        icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png)')
         if not ok:
             file_open = False
             return
@@ -264,7 +264,7 @@ class IconLabel(QLabel):
                     labels = []
                     window.load_items()
                 elif 'Icon' in clicked_button:
-                    icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
+                    icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png)')
                     if not ok:
                         return
                     clicked[0]['icon'] = icon
