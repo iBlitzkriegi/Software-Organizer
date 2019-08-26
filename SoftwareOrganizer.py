@@ -234,6 +234,7 @@ class IconLabel(QLabel):
             return
         if e.type() == QEvent.MouseButtonPress:
             if e.button() == Qt.RightButton:
+                global data
                 item = clicked[0][special_key]
                 if categories_mode:
                     name = item.capitalize()
@@ -251,14 +252,24 @@ class IconLabel(QLabel):
                 if 'Cancel' in clicked_button:
                     return
                 elif 'Discard' in clicked_button:
-                    return
+                    items.remove(clicked[0])
+                    labels.remove(self)
+                    window.clear_grid()
+                    if categories_mode:
+                        name = clicked[0][special_key]
+                        del data[name]
+                        data = file_loader.dump_data(data=data, items=items)
+                    else:
+                        data = file_loader.dump_data(items=items)
+                    labels = []
+                    window.load_items()
                 elif 'Icon' in clicked_button:
                     icon, ok = QFileDialog.getOpenFileName(None, 'Select Icon File', '', 'Images (*.png *.jpg)')
                     if not ok:
                         return
                     clicked[0]['icon'] = icon
                     window.clear_grid()
-                    file_loader.dump_data(items=items)
+                    data = file_loader.dump_data(items=items)
                     labels = []
                     window.load_items()
                     return
