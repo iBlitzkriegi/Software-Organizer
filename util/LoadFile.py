@@ -32,6 +32,7 @@ class FileLoader:
             self.data = json.load(f)
             self.items = self.data[self.key]
             f.close()
+
         return self.data
 
     def dump_data(self, **kwargs):
@@ -44,15 +45,8 @@ class FileLoader:
     def disable_tutorials(self):
         if self.data is None:
             self.load_file()
-        self.data['tutorials'] = {
-            "first-open": False,
-            "add-category": False,
-            "add-category-icon": False,
-            "enter-category": False,
-            "add-icon": False,
-            "add-game": False
-        }
-
+        for key in self.data['tutorials']:
+            self.data['tutorials'][key] = False
         self.dump_data()
 
     def toggle_tutorial(self, text):
